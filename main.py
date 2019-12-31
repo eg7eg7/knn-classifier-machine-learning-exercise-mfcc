@@ -4,27 +4,16 @@
 #
 # EDEN DUPONT 204808596
 import os
-
 import librosa
 import numpy as np
-import glob
 from scipy.stats import stats
-import sksound
-from sksound.sounds import Sound
-
-test_files_path = r"D:/GitHub/knn-exercise/test_files"
-
-training_data_path = r"D:/GitHub/knn-exercise/train_data/"
-training_folders = ["one", "two", "three", "four", "five"]
-output_file = "output.txt"
 
 
 class KnnClassifier:
     INFINITE_DISTANCE = 1000000.0
 
-    def __init__(self, dim_size, k=3):
+    def __init__(self, k=3):
         self.k = 0
-        self.dim_size = dim_size
         self.num_classes = 0
         self.k = k
         self.training_dict = {}
@@ -74,36 +63,55 @@ def extract_mfcc_from_wav(wav_file_path):
     return mfcc
 
 
-def add_training_dataset(knn):
-    for dataset in training_folders:
-        path = r'%s' % (training_data_path + dataset)
+def add_training_dataset(knn, training_folder, classes):
+    for dataset in classes:
+        path = r'%s' % (training_folder + dataset)
         for filename in os.listdir(path):
             if filename.endswith(".wav"):
                 mfcc = extract_mfcc_from_wav(path + "/" + filename)
                 knn.add_training_data_point(mfcc=mfcc, label=dataset)
 
 
+def switch(prediction):
+    switcher = {
+        'one': "1",
+        'two': "2",
+        'three': "3",
+        'four': "4",
+        'five': "5"
+    }
+    return switcher.get(prediction, "Invalid month")
 
-def playsound(path):
-    mySound = Sound(path)
-    mySound.play()
 
-
-def predict_classes(knn):
+def predict_classes(knn, test_files_path):
+    results = []
     for file in os.listdir(test_files_path):
         if file.endswith(".wav"):
             path = test_files_path + "/" + file
             mfcc = extract_mfcc_from_wav(path)
-            a = knn.predict_class(mfcc)
-            print(a)
-            # playsound(path)
+            prediction = knn.predict_class(mfcc)
+            results.append((file, switch(prediction)))
+    return results
+
+
+def print_to_file(path, results, print_console=False):
+    output = open(path, 'w')
+    for file, prediction in results:
+        text = str(file) + " - " + str(prediction) + "\n"
+        output.write(text)
+        print(str(file) + " - " + str(prediction))
+    output.close()
 
 
 def main():
-    knn = KnnClassifier(dim_size=20, k=3)
-    add_training_dataset(knn)
-    # print(knn.training_dict['one'][0])
-    predict_classes(knn)
+    test_files_path = r"test_files"
+    training_data_path = r"train_data/"
+    classes = ["one", "two", "three", "four", "five"]
+    output_file = "output.txt"
+
+    knn = KnnClassifier(k=1)
+    add_training_dataset(knn, training_data_path, classes)
+    print_to_file(output_file, predict_classes(knn, test_files_path), print_console=True)
 
 
 if __name__ == "__main__":
