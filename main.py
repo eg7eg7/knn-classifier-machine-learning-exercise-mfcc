@@ -72,7 +72,7 @@ def add_training_dataset(knn, training_folder, classes):
                 knn.add_training_data_point(mfcc=mfcc, label=dataset)
 
 
-def switch(prediction):
+def prediction_as_integer(prediction):
     switcher = {
         'one': "1",
         'two': "2",
@@ -90,7 +90,7 @@ def predict_classes(knn, test_files_path):
             path = test_files_path + "/" + file
             mfcc = extract_mfcc_from_wav(path)
             prediction = knn.predict_class(mfcc)
-            results.append((file, switch(prediction)))
+            results.append((file, prediction_as_integer(prediction)))
     return results
 
 
