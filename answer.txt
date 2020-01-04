@@ -1,0 +1,10 @@
+2. In this exercise the best preformed result is given by setting k to be 1
+(one nearest neighbor). What could be the reason to choose such a small
+hyper-parameter? (hint: think about Voronoi diagram and the features
+representation)
+
+תשובה:
+
+כאשר K=1 - 1-nearest point
+
+המודל יהיה מאוד קרוב לאימון, הביאס יהיה נמוך עם ואריאנס גבוה, ולכן כאשר ניקח נקודת test, אנחנו נרמה לבחור בפרמטר כזה רק כאשר אנחנו יודעים שהמחלקות מופרדות היטב ואין outliars גדולים
